@@ -16,7 +16,7 @@ describe("Meshok", () => {
 	});
 
 	it("works", async () => {
-		const appHtml = await page.$eval("#app", app => app.innerHTML);
+		const appHtml = await page.$eval("#root", root => root.innerHTML);
 
 		expect(appHtml).toMatchSnapshot();
 	});

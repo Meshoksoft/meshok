@@ -4,19 +4,26 @@ exports[`Meshok works 1`] = `
 
 <ul>
   <li>
-    <div>
+    <label>
       Hello World!!!
-    </div>
+    </label>
     <ul>
       <li>
-        <div>
+        <label>
           Foo
-        </div>
+        </label>
+        <ul>
+          <li>
+            <label>
+              Hello World!!!
+            </label>
+          </li>
+        </ul>
       </li>
       <li>
-        <div>
-          Bar
-        </div>
+        <label>
+          Baz
+        </label>
       </li>
     </ul>
   </li>
