@@ -1,0 +1,19 @@
+{
+	"name": "meshok-e2e",
+	"version": "0.0.0",
+	"license": "MIT",
+	"private": true,
+	"scripts": {
+		"test": "jest"
+	},
+	"devDependencies": {
+		"@types/jest": "^23.3.11",
+		"@types/puppeteer": "^1.11.1",
+		"jest": "^23.6.0",
+		"jest-serializer-html": "^6.0.0",
+		"prettier": "^1.15.3",
+		"puppeteer": "^1.11.0",
+		"ts-jest": "^23.10.5",
+		"typescript": "^3.2.2"
+	}
+}

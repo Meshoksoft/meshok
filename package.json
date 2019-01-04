@@ -1,0 +1,8 @@
+{
+	"name": "meshok",
+	"licence": "MIT",
+	"private": true,
+	"workspaces": [
+		"packages/*"
+	]
+}

@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Meshok works 1`] = `
+
+<ul>
+  <li>
+    <div>
+      Hello World!!!
+    </div>
+    <ul>
+      <li>
+        <div>
+          Foo
+        </div>
+      </li>
+      <li>
+        <div>
+          Bar
+        </div>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+`;
