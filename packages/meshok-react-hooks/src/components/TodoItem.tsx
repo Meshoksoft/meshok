@@ -20,7 +20,7 @@ export function TodoItem({ itemData }: TodoItemProps): JSX.Element {
 					)}
 				</label>
 			)}
-			{itemData.children && (
+			{itemData.children && itemData.children.length > 0 && (
 				<ul>
 					{itemData.children.map((child, i) => (
 						<li key={i}>
