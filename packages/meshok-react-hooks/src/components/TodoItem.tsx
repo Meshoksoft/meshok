@@ -6,29 +6,40 @@ interface TodoItemProps {
 	itemData: ITodo;
 }
 
-export function TodoItem({ itemData }: TodoItemProps): JSX.Element {
+export function TodoItem(
+	{ itemData: { title, children } }: TodoItemProps
+): JSX.Element {
 	const isEditing = false;
 
 	return (
 		<>
-			{itemData.title && (
-				<label>
-					{isEditing ? (
-						<input type="text" defaultValue={itemData.title} />
-					) : (
-						itemData.title
-					)}
-				</label>
-			)}
-			{itemData.children && itemData.children.length > 0 && (
-				<ul>
-					{itemData.children.map((child, i) => (
-						<li key={i}>
-							<TodoItem itemData={child} />
-						</li>
-					))}
-				</ul>
-			)}
+			{renderTitle(title, isEditing)}
+			{renderChildren(children)}
 		</>
 	);
+
+	function renderTitle(
+		title: string | undefined,
+		isEditing: boolean,
+	): JSX.Element | null {
+		return title
+			? isEditing
+				?	<label>
+						<input type="text" defaultValue={title} />
+					</label>
+				: <label>{title}</label>
+			: null;
+	}
+
+	function renderChildren(
+		children?: ITodo[]
+	): JSX.Element | null {
+		return (children && children.length > 0)
+			?	<ul>{
+					children.map((child, i) =>
+						<li key={i}><TodoItem itemData={child} /></li>
+					)
+				}</ul>
+			: null;
+	}
 }
