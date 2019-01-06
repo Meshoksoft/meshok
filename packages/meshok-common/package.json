@@ -4,5 +4,8 @@
 	"license": "MIT",
 	"private": true,
 	"main": "index.ts",
-	"typings": "index.ts"
+	"typings": "index.ts",
+	"scripts": {
+		"test": "echo Test is under construction"
+	}
 }

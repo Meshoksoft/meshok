@@ -8,7 +8,8 @@ describe("Meshok", () => {
 		browser = await puppeteer.launch();
 		page = await browser.newPage();
 
-		await page.goto("http://localhost:3000");
+		const port = process.env["PORT"] || "3000";
+		await page.goto(`http://localhost:${port}`);
 	});
 
 	afterAll(async () => {
