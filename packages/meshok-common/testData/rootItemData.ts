@@ -12,7 +12,8 @@ export const rootItemData = {
 					]
 				},
 				{
-					title: "Baz"
+					title: "Baz",
+					children: []
 				}
 			]
 		}
