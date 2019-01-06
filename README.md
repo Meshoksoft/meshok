@@ -1,4 +1,9 @@
+# Using
+
+- Run tests of all packages with `yarn test`
+
 # To Do
 
-- [ ] Добавить хуки в meshok-react-hooks
-- [ ] Избавиться от babel в meshok-react-hooks
+- [ ] Add react hooks to meshok-react-hooks
+- [ ] Replace babel with typescript in meshok-react-hooks
+- [ ] Crossplatform meshok-e2e
