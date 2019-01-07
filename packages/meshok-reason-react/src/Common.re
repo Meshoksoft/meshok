@@ -1,28 +1,19 @@
 type todo = {
 	title: option(string),
 	children: option(array(todo)),
-}
+};
 
-let rootItemData: todo = {
-	title: None,
-	children: Some([|
-		{
-			title: Some("Hello World!!!"),
-			children: Some([|
-				{
-					title: Some("Foo"),
-					children: Some([|
-						{
-							title: Some("Hello World!!!"),
-							children: None,
-						},
-					|]),
-				},
-				{
-					title: Some("Baz"),
-					children: None,
-				}
-			|]),
-		}
-	|]),
-}
+[@bs.deriving abstract]
+type todoJs = {
+	[@bs.optional] title: string,
+	[@bs.optional] children: array(todoJs),
+};
+
+let rec todoFromJs = (td: todoJs): todo => {
+	title: td->titleGet,
+	children: td->childrenGet |> Belt.Option.map(_, Array.map(todoFromJs)),
+};
+
+[@bs.val] [@bs.module "meshok-e2e"]
+external rootTodoItemDataJs: todoJs = "rootTodoItemData";
+let rootTodoItemData: todo = rootTodoItemDataJs |> todoFromJs;

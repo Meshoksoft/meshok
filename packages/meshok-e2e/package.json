@@ -1,8 +1,10 @@
 {
 	"name": "meshok-e2e",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"license": "MIT",
 	"private": true,
+	"main": "./data/index.ts",
+	"typings": "./data/index.ts",
 	"scripts": {
 		"start": "jest",
 		"test": "echo Test is under construction"
@@ -15,6 +17,7 @@
 		"@types/puppeteer": "^1.11.1",
 		"jest": "^23.6.0",
 		"jest-serializer-html": "^6.0.0",
+		"meshok-common": "0.1.1",
 		"prettier": "^1.15.3",
 		"puppeteer": "^1.11.0",
 		"ts-jest": "^23.10.5",

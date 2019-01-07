@@ -1,5 +1,5 @@
 
 ReactDOMRe.renderToElementWithId(
-	<TodoItem.TodoItem itemData=Common.rootItemData />,
+	<TodoItem.TodoItem itemData=Common.rootTodoItemData />,
 	"root"
 );
