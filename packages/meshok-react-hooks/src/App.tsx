@@ -1,8 +1,8 @@
 import React from "react";
 import "./App.css";
 import { TodoItem } from "./components/TodoItem";
-import { rootItemData } from "meshok-common/testData/rootItemData";
+import { rootTodoItemData } from "meshok-e2e";
 
 export function App(): JSX.Element {
-	return <TodoItem itemData={rootItemData} />;
+	return <TodoItem itemData={rootTodoItemData} />;
 }

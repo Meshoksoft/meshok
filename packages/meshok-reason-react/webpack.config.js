@@ -1,7 +1,7 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const outputDir = path.join(__dirname, "dist/");
 
+const outputDir = path.join(__dirname, "dist/");
 const isProd = process.env.NODE_ENV === "production";
 
 module.exports = {
@@ -10,6 +10,15 @@ module.exports = {
 	output: {
 		path: outputDir,
 		filename: "Index.js"
+	},
+	resolve: {
+		extensions: [".js", ".jsx", ".ts", ".tsx"]
+	},
+	module: {
+		rules: [{
+			test: /\.tsx?$/,
+			loader: "ts-loader"
+		}]
 	},
 	plugins: [
 		new HtmlWebpackPlugin({

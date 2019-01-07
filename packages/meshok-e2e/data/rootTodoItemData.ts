@@ -1,4 +1,6 @@
-export const rootItemData = {
+/* import { ITodo } from "meshok-common"; */
+
+export const rootTodoItemData/*: ITodo*/ = {
 	children: [
 		{
 			title: "Hello World!!!",
