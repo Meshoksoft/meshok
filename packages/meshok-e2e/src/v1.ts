@@ -1,6 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+import puppeteer from "puppeteer";
 
-exports[`Meshok works 1`] = `
+export async function index(page: puppeteer.Page) {
+	const appHtml = await page.$eval("#root", root => root.innerHTML);
+	expect(appHtml).toMatchInlineSnapshot(`
 
 <ul>
   <li>
@@ -29,4 +31,5 @@ exports[`Meshok works 1`] = `
   </li>
 </ul>
 
-`;
+`);
+}
