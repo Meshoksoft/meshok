@@ -1,6 +1,6 @@
 type todo = {
 	title: option(string),
-	children: option(array(todo)),
+	children: array(todo),
 };
 
 [@bs.deriving abstract]
@@ -11,7 +11,11 @@ type todoJs = {
 
 let rec todoFromJs = (td: todoJs): todo => {
 	title: td->titleGet,
-	children: td->childrenGet |> Belt.Option.map(_, Array.map(todoFromJs)),
+	children:
+		switch(td->childrenGet) {
+		| None => [||];
+		| Some(children) => children |> Array.map(todoFromJs);
+		},
 };
 
 [@bs.val] [@bs.module "meshok-e2e"]
