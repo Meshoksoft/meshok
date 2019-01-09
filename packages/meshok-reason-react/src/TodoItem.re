@@ -1,88 +1,123 @@
 
-let createTodoItem = ref((~itemData as _) => ReasonReact.null);
+let createTodoItem =
+	ref((~itemData as _, ~setItemData as _) => ReasonReact.null);
 
 module TodoItem = {
 	type state = {
-		showChildren: bool,
-		editTitle: bool,
+		itemData: option(Common.todo),
 	};
 
-	type action = ToggleChildrenVisibility;
+	type action =
+		| ChangeItemData(Common.todo);
 
-	let rec make = (~itemData as { title, children }: Common.todo, _) => {
+	let rec make = (
+		~itemData: Common.todo,
+		~setItemData: option(Common.todo => unit) = None,
+		_,
+	) => {
 		...ReasonReact.reducerComponent("TodoItem"),
 
 		initialState: () => {
-			showChildren: true,
-			editTitle: false,
+			itemData: {
+				let isRoot = setItemData == None;
+				isRoot ? Some(itemData) : None;
+			},
 		},
 
-		reducer: (action, state) =>
+		reducer: (action, _state) =>
 			switch (action) {
-			| ToggleChildrenVisibility =>
-				ReasonReact.Update(
-					{...state, showChildren: !state.showChildren}
-				)
+			| ChangeItemData(itemData) =>
+				ReasonReact.Update({/*...state,*/ itemData: Some(itemData)})
 			},
 
-		render: self =>
+		render: self => {
+			let itemData =
+				Belt.Option.getWithDefault(self.state.itemData, itemData);
+
+			let setItemData = Belt.Option.getWithDefault(
+				setItemData,
+				itemData => {
+					Js.log(itemData);
+					self.send(ChangeItemData(itemData));
+				}
+			);
+
 			<>
-				{renderTitle(
-					self,
-					~title,
-					~editTitle=self.state.editTitle,
-					~children
-				)}
-				{renderChildren(
-					self,
-					~children
-				)}
-			</>,
+				{renderTitle(~itemData, ~setItemData)}
+				{renderChildren(~itemData, ~setItemData)}
+			</>;
+		},
 	}
 
-	and renderTitle = (self, ~title, ~editTitle, ~children) =>
+	and renderTitle = (
+		~itemData, ~setItemData
+	) => {
+		let {title, editTitle}: Common.todo = itemData;
+
 		switch (title) {
 		| None => ReasonReact.null;
 		| Some(title) =>
 			<>
-				{renderTitleText(self, ~title, ~editTitle)}
-				{renderTitleButtons(self, ~children)}
-			</>
-		}
+				{renderTitleText(~title, ~editTitle)}
+				{renderTitleButtons(~itemData, ~setItemData)}
+			</>;
+		};
+	}
 
-	and renderTitleText = (_self, ~title, ~editTitle) =>
-		<label>
-			{editTitle
+	and renderTitleText = (~title, ~editTitle) =>
+		<label>{
+			editTitle
 				? <input type_="text" defaultValue={title} />
-				: title |> ReasonReact.string}
-		</label>
+				: title |> ReasonReact.string
+		}</label>
 
-	and renderTitleButtons = (self, ~children) =>
+	and renderTitleButtons = (~itemData, ~setItemData) => {
+		let {showChildren, children}: Common.todo = itemData;
+
 		switch(children) {
-		| [||] => ReasonReact.null;
+		| [] => ReasonReact.null;
 		| _ =>
-			<button onClick=(_ => self.send(ToggleChildrenVisibility))>{
-				(self.state.showChildren ? "Hide" : "Show")	++ " children"
+			<button onClick=(_ => setItemData(
+				{ ...itemData, showChildren: !showChildren }
+			))>{
+				(showChildren ? "Hide" : "Show") ++ " children"
 					|> ReasonReact.string
 			}</button>;
-		}
+		};
+	}
 
-	and renderChildren = (self, ~children) =>
-		switch(self.state.showChildren, children) {
-			| (false, _) | (_, [||]) => ReasonReact.null;
-			| _ =>
-				<ul>{
+	and renderChildren = (~itemData, ~setItemData) => {
+		let {showChildren, children}: Common.todo = itemData;
+
+		let setNChildrenData = (n, childrenData) => {
+			setItemData({
+				...itemData,
+				children: children
+					|> Lib.setNElementOfList(n, childrenData)
+					|> Belt.Option.getExn,
+			})
+		};
+
+		switch(showChildren, children) {
+			| (false, _) | (_, []) => ReasonReact.null;
+			| (true, children) =>
+				<ul>...{
 					children
-					|> Array.mapi((i, child) =>
+					|> List.mapi((i, child) =>
 						<li key={i |> string_of_int}>
 							/* <TodoItem itemData={child} /> */
-							{createTodoItem^(~itemData=child)}
+							{createTodoItem^(
+								~itemData = child,
+								~setItemData = Some(setNChildrenData(i)),
+							)}
 						</li>,
 					)
-					|> ReasonReact.array
+					|> Array.of_list
 				}</ul>;
 		}
+	};
 };
 
 createTodoItem :=
-	(~itemData) => TodoItem.make([], ~itemData) |> ReasonReact.element;
+	(~itemData, ~setItemData) =>
+		TodoItem.make([], ~itemData, ~setItemData) |> ReasonReact.element;
