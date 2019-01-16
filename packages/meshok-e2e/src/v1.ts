@@ -1,7 +1,11 @@
 import puppeteer from "puppeteer";
 
+export async function getAppHtml(page: puppeteer.Page): Promise<string> {
+	return await page.$eval("#root", root => root.innerHTML);
+}
+
 export async function index(page: puppeteer.Page) {
-	const appHtml = await page.$eval("#root", root => root.innerHTML);
+	const appHtml = await getAppHtml(page);
 	expect(appHtml).toMatchInlineSnapshot(`
 
 <ul>
