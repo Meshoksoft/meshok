@@ -1,6 +1,6 @@
 {
 	"name": "meshok-e2e",
-	"version": "2.2.0",
+	"version": "2.2.1",
 	"license": "MIT",
 	"private": true,
 	"main": "./data/index.ts",
