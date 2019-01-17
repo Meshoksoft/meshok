@@ -1,7 +1,6 @@
 import puppeteer from "puppeteer";
 
 import { getAppHtml } from "./v1";
-export { getAppHtml };
 
 export function calcSnapshot(
 	showChildren: false

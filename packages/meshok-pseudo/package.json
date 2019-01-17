@@ -11,6 +11,6 @@
 	},
 	"devDependencies": {
 		"http-server": "^0.11.1",
-		"meshok-e2e": "2.3.0"
+		"meshok-e2e": "2.3.1"
 	}
 }
