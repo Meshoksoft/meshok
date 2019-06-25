@@ -9,8 +9,12 @@ import { rootTodoItemData } from "meshok-e2e";
 
 export function App(): JSX.Element {
 	const rootTodo = Todo.create(rootTodoItemData);
-	connectReduxDevtools(require("remotedev"), rootTodo);
-	(window as any).rootTodo = rootTodo;
+
+	if (process.env.NODE_ENV === "development") {
+		connectReduxDevtools(require("remotedev"), rootTodo);
+		(window as any).rootTodo = rootTodo;
+		(window as any).mst = require("mobx-state-tree");
+	}
 
 	return <TodoItem itemData={rootTodo} />;
 }
