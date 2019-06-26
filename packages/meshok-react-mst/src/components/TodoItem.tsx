@@ -1,36 +1,70 @@
 import React from "react";
-import { SnapshotOut } from "mobx-state-tree";
+import { Instance } from "mobx-state-tree";
 import { observer } from "mobx-react-lite";
 
+import "./TodoItem.css";
 import { Todo } from "../model/Todo";
 
 function _TodoItem(
-	{ itemData: { title, children } }: { itemData: SnapshotOut<typeof Todo> }
+	{
+		itemData: { title, children, showChildren, toggleChildrenVisibility }
+	}: {
+		itemData: Instance<typeof Todo>
+	}
 ): JSX.Element {
 	const isEditing = false;
 
 	return (
 		<>
-			{renderTitle(title, isEditing)}
-			{renderChildren(children)}
+			{title
+				? renderTitle(title, isEditing, showChildren, toggleChildrenVisibility)
+				: null}
+			{showChildren
+				? renderChildren(children)
+				: null}
 		</>
 	);
 
 	function renderTitle(
 		title: string | undefined,
 		isEditing: boolean,
-	): JSX.Element | null {
-		return title
-			? isEditing
-				?	<label>
-						<input type="text" defaultValue={title} />
-					</label>
-				: <label>{title}</label>
-			: null;
+		showChildren: boolean,
+		toggleChildrenVisibility: () => void
+	): JSX.Element {
+		return (
+			<>
+				{renderTitleText(title, isEditing)}
+				{children.length > 0
+					? renderTitleButtons(showChildren, toggleChildrenVisibility)
+					: null}
+			</>
+		);
+	}
+
+	function renderTitleText(
+		title: string | undefined,
+		isEditing: boolean
+	): JSX.Element {
+		return isEditing
+			?	<label>
+					<input type="text" defaultValue={title} />
+				</label>
+			: <label>{title}</label>;
+	}
+
+	function renderTitleButtons(
+		showChildren: boolean,
+		toggleChildrenVisibility: () => void
+	): JSX.Element {
+		return (
+			<button onClick={() => toggleChildrenVisibility()}>
+				{`${showChildren ? "Hide" : "Show"} children`}
+			</button>
+		);
 	}
 
 	function renderChildren(
-		children: SnapshotOut<typeof Todo>[]
+		children: Instance<typeof Todo>[]
 	): JSX.Element | null {
 		return (children.length > 0)
 			?	<ul>{

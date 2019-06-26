@@ -1,13 +1,13 @@
 import { types, IAnyModelType } from "mobx-state-tree";
 
 export const Todo = types
-	.model({
+	.model("Todo", {
 		title: types.maybe(types.string),
 		editTitle: false,
 		showChildren: true,
 		children: types.optional(
-			types.array(types.late((): IAnyModelType => Todo)),
-			[],
+			types.array(types.late("children", (): IAnyModelType => Todo)),
+			[]
 		),
 	})
 	.actions(self => ({
