@@ -6,7 +6,9 @@ interface TodoItemProps {
 	itemData: ITodo;
 }
 
-export function TodoItem({ itemData }: TodoItemProps): JSX.Element {
+export const TodoItem = memo(function TodoItem({
+	itemData
+}: TodoItemProps): JSX.Element {
 	const [data, setData] = useState(itemData);
 
 	const { title, children, showChildren } = data;
@@ -58,7 +60,7 @@ export function TodoItem({ itemData }: TodoItemProps): JSX.Element {
 			) : null}
 		</>
 	);
-}
+});
 
 const TodoItemTitle = memo(function TodoItemTitle({
 	title,
