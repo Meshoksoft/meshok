@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef, useEffect, memo } from "react";
 
 import { ITodo } from "meshok-common";
 
@@ -11,8 +11,15 @@ export function TodoItem({ itemData }: TodoItemProps): JSX.Element {
 
 	const { title, children, showChildren } = data;
 
-	const isChildrenVisible =
-		typeof showChildren === "undefined" ? true : showChildren;
+	useEffect(() => {
+		itemData.title = data.title;
+	}, [title]);
+
+	useEffect(() => {
+		itemData.showChildren = data.showChildren;
+	}, [showChildren]);
+
+	const isChildrenVisible = typeof showChildren === "undefined" ? true : showChildren;
 
 	const toggleChildrenVisibility = useCallback(() => {
 		setData(prevData => ({
@@ -24,17 +31,9 @@ export function TodoItem({ itemData }: TodoItemProps): JSX.Element {
 		}));
 	}, []);
 
-	const onChangeTitle = useCallback((title: string) => {
+	const changeTitle = useCallback((title: string) => {
 		setData(prevData => ({ ...prevData, title }));
 	}, []);
-
-	useEffect(() => {
-		itemData.title = data.title;
-	}, [title]);
-
-	useEffect(() => {
-		itemData.showChildren = data.showChildren;
-	}, [showChildren]);
 
 	return (
 		<>
@@ -44,11 +43,11 @@ export function TodoItem({ itemData }: TodoItemProps): JSX.Element {
 					hasChildren={Boolean(children && children.length)}
 					showChildren={isChildrenVisible}
 					toggleChildrenVisibility={toggleChildrenVisibility}
-					onChangeTitle={onChangeTitle}
+					onChangeTitle={changeTitle}
 				/>
 			) : null}
 
-			{children && children.length > 0 && isChildrenVisible ? (
+			{isChildrenVisible && children && children.length > 0 ? (
 				<ul>
 					{children.map((child, i) => (
 						<li key={i}>
@@ -61,7 +60,7 @@ export function TodoItem({ itemData }: TodoItemProps): JSX.Element {
 	);
 }
 
-function TodoItemTitle({
+const TodoItemTitle = memo(function TodoItemTitle({
 	title,
 	hasChildren,
 	showChildren,
@@ -84,7 +83,7 @@ function TodoItemTitle({
 				setIsEditing(prevIsEditing => !prevIsEditing);
 			} else if (
 				e.type === "keypress" &&
-				(e as React.KeyboardEvent).key === "Enter"
+					(e as React.KeyboardEvent).key === "Enter"
 			) {
 				const newTitle = inputRef.current && inputRef.current.value;
 
@@ -126,4 +125,4 @@ function TodoItemTitle({
 			) : null}
 		</>
 	);
-}
+});
