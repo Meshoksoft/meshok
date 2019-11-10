@@ -1,130 +1,125 @@
-import React, { useState, useCallback, useRef, useEffect, memo } from "react";
-
 import { ITodo } from "meshok-common";
+import React, { memo, useState, useCallback } from "react";
 
-interface TodoItemProps {
-	itemData: ITodo;
+export const TodoTree = memo(_TodoTree);
+export const TodoItem = memo(_TodoItem);
+
+function _TodoTree({
+	initData,
+}: {
+	initData: ITodo;
+}): JSX.Element {
+	const [data, setData] = useState(initData);
+
+	return <TodoItem data={data} setData={setData} />;
 }
 
-export const TodoItem = memo(function TodoItem({
-	itemData
-}: TodoItemProps): JSX.Element {
-	const [data, setData] = useState(itemData);
-
-	const { title, children, showChildren } = data;
-
-	useEffect(() => {
-		itemData.title = data.title;
-	}, [title]);
-
-	useEffect(() => {
-		itemData.showChildren = data.showChildren;
-	}, [showChildren]);
-
-	const isChildrenVisible = typeof showChildren === "undefined" ? true : showChildren;
+function _TodoItem({
+	data: { title, children, showChildren = true },
+	setData,
+}: {
+	data: ITodo;
+	setData(fn: (prevData: ITodo) => ITodo): void;
+}): JSX.Element {
 
 	const toggleChildrenVisibility = useCallback(() => {
-		setData(prevData => ({
-			...prevData,
-			showChildren:
-				typeof prevData.showChildren === "undefined"
-					? false
-					: !prevData.showChildren
-		}));
-	}, []);
+		setData(prevData => {
+			const prevShowChildren = typeof prevData.showChildren === "undefined"
+				? true
+				: prevData.showChildren;
 
-	const changeTitle = useCallback((title: string) => {
-		setData(prevData => ({ ...prevData, title }));
-	}, []);
-
-	return (
-		<>
-			{title ? (
-				<TodoItemTitle
-					title={title}
-					hasChildren={Boolean(children && children.length)}
-					showChildren={isChildrenVisible}
-					toggleChildrenVisibility={toggleChildrenVisibility}
-					onChangeTitle={changeTitle}
-				/>
-			) : null}
-
-			{isChildrenVisible && children && children.length > 0 ? (
-				<ul>
-					{children.map((child, i) => (
-						<li key={i}>
-							<TodoItem itemData={child} />
-						</li>
-					))}
-				</ul>
-			) : null}
-		</>
-	);
-});
-
-const TodoItemTitle = memo(function TodoItemTitle({
-	title,
-	hasChildren,
-	showChildren,
-	toggleChildrenVisibility,
-	onChangeTitle
-}: {
-	title: string;
-	hasChildren: boolean;
-	showChildren: boolean;
-	toggleChildrenVisibility: () => void;
-	onChangeTitle: (title: string) => void;
-}): JSX.Element {
-	const [isEditing, setIsEditing] = useState(false);
-
-	const inputRef = useRef<HTMLInputElement>(null);
-
-	const toggleIsEditing = useCallback(
-		(e: React.MouseEvent | React.KeyboardEvent) => {
-			if (e.type === "dblclick") {
-				setIsEditing(prevIsEditing => !prevIsEditing);
-			} else if (
-				e.type === "keypress" &&
-					(e as React.KeyboardEvent).key === "Enter"
-			) {
-				const newTitle = inputRef.current && inputRef.current.value;
-
-				if (newTitle && newTitle !== title) {
-					onChangeTitle(newTitle);
-				}
-
-				setIsEditing(prevIsEditing => !prevIsEditing);
+			return {
+				...prevData,
+				showChildren: !prevShowChildren,
 			}
-		},
-		[]
-	);
+		});
+	}, []);
 
-	useEffect(() => {
-		if (isEditing && inputRef.current) {
-			inputRef.current.focus();
-		}
-	}, [isEditing]);
+	const setItemData = useCallback(
+		(n: number) =>
+			(setItemData: (prevData: ITodo) => ITodo) => {
+				setData(prevData => ({
+					...prevData,
+					children: prevData.children && prevData.children.map(
+						(value, index) =>
+							index === n ? setItemData(value) : value
+					)
+				}))
+		}, []);
+
+	const isEditing = false;
 
 	return (
 		<>
-			{isEditing ? (
-				<label>
-					<input
-						type="text"
-						defaultValue={title}
-						ref={inputRef}
-						onKeyPress={toggleIsEditing}
-					/>
-				</label>
-			) : (
-				<label onDoubleClick={toggleIsEditing}>{title}</label>
-			)}
-
-			{hasChildren ? (
-				<button onClick={toggleChildrenVisibility}>
-					{`${showChildren ? "Hide" : "Show"} children`}
-				</button>
-			) : null}
+			{title
+				? renderTitle(
+					title,
+					isEditing,
+					children ? children.length > 0 : false,
+					showChildren,
+					toggleChildrenVisibility
+				  )
+				: null }
+			{showChildren && children
+				? renderChildren(children, setItemData)
+				: null}
 		</>
+	)
+}
+
+function renderTitle(
+	title: string,
+	isEditing: boolean,
+	showButtons: boolean,
+	showChildren: boolean,
+	toggleChildrenVisibility: () => void
+): JSX.Element {
+	return (
+		<>
+			{renderTitleText(title, isEditing)}
+			{showButtons
+				? renderTitleButtons(
+					showChildren,
+					toggleChildrenVisibility
+				  )
+				: null}
+		</>
+	)
+}
+
+function renderTitleText(
+	title: string,
+	isEditing: boolean,
+): JSX.Element {
+	return isEditing
+		?	<label>
+				<input type="text" defaultValue={title} />
+			</label>
+		: <label>{title}</label>;
+}
+
+function renderTitleButtons(
+	showChildren: boolean,
+	toggleChildrenVisibility: () => void
+): JSX.Element {
+	return (
+		<button onClick={toggleChildrenVisibility}>
+			{`${showChildren ? "Hide" : "Show"} children`}
+		</button>
 	);
-});
+}
+
+function renderChildren(
+	children: ITodo[],
+	setData: (n: number) =>	(setItemData: (prevData: ITodo) => ITodo) => void
+): JSX.Element | null {
+	return children.length > 0
+		?	<ul>{
+				children.map((child, i) =>
+					<li key={i}>
+						<TodoItem data={child} setData={setData(i)}/>
+					</li>
+				)
+			}</ul>
+		: null;
+}
