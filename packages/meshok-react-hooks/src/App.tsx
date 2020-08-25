@@ -5,5 +5,4 @@ import { rootTodoItemData } from "meshok-e2e";
 
 export function App(): JSX.Element {
 	return <TodoTree initData={rootTodoItemData} />;
-	// return <TodoItem itemData={rootTodoItemData} />;
 }

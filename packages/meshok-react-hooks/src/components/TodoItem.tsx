@@ -4,6 +4,9 @@ import React, { memo, useState, useCallback } from "react";
 export const TodoTree = memo(_TodoTree);
 export const TodoItem = memo(_TodoItem);
 
+type SetDataStateFn = (prevData: ITodo) => ITodo;
+type SetDataState = (fn: SetDataStateFn) => void;
+
 function _TodoTree({
 	initData,
 }: {
@@ -19,7 +22,7 @@ function _TodoItem({
 	setData,
 }: {
 	data: ITodo;
-	setData(fn: (prevData: ITodo) => ITodo): void;
+	setData: SetDataState;
 }): JSX.Element {
 
 	const toggleChildrenVisibility = useCallback(() => {
@@ -35,14 +38,14 @@ function _TodoItem({
 		});
 	}, []);
 
-	const setItemData = useCallback(
-		(n: number) =>
-			(setItemData: (prevData: ITodo) => ITodo) => {
+	const getSetDataForChild: (childIndex: number) => SetDataState =
+		useCallback((childIndex: number) =>
+			(setChildDataFn: SetDataStateFn) => {
 				setData(prevData => ({
 					...prevData,
 					children: prevData.children && prevData.children.map(
 						(value, index) =>
-							index === n ? setItemData(value) : value
+							index === childIndex ? setChildDataFn(value) : value
 					)
 				}))
 		}, []);
@@ -61,7 +64,7 @@ function _TodoItem({
 				  )
 				: null }
 			{showChildren && children
-				? renderChildren(children, setItemData)
+				? renderChildren(children, getSetDataForChild)
 				: null}
 		</>
 	)
@@ -92,10 +95,12 @@ function renderTitleText(
 	isEditing: boolean,
 ): JSX.Element {
 	return isEditing
-		?	<label>
+		?
+			<label>
 				<input type="text" defaultValue={title} />
 			</label>
-		: <label>{title}</label>;
+		:
+			<label>{title}</label>;
 }
 
 function renderTitleButtons(
@@ -111,13 +116,13 @@ function renderTitleButtons(
 
 function renderChildren(
 	children: ITodo[],
-	setData: (n: number) =>	(setItemData: (prevData: ITodo) => ITodo) => void
+	genSetDataForChild: (childIndex: number) => SetDataState
 ): JSX.Element | null {
 	return children.length > 0
 		?	<ul>{
 				children.map((child, i) =>
 					<li key={i}>
-						<TodoItem data={child} setData={setData(i)}/>
+						<TodoItem data={child} setData={genSetDataForChild(i)}/>
 					</li>
 				)
 			}</ul>
