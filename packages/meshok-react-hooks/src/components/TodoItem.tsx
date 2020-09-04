@@ -36,7 +36,7 @@ function _TodoItem({
 				showChildren: !prevShowChildren,
 			}
 		});
-	}, []);
+	}, [setData]);
 
 	const getSetDataForChild: (childIndex: number) => SetDataState =
 		useCallback((childIndex: number) =>
@@ -48,7 +48,7 @@ function _TodoItem({
 							index === childIndex ? setChildDataFn(value) : value
 					)
 				}))
-		}, []);
+		}, [setData]);
 
 	const isEditing = false;
 
