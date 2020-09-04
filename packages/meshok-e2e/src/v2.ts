@@ -12,11 +12,10 @@ export function calcSnapshot(
 ): string;
 
 export function calcSnapshot(
-	showChildren,
+	showChildren: boolean,
 	showGrandChildren = false
 ) {
 	return `
-
 <ul>
   <li>
     <label>
@@ -49,7 +48,6 @@ export function calcSnapshot(
     </ul>` : ``}
   </li>
 </ul>
-
 `;
 }
 
