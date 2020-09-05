@@ -17,11 +17,11 @@
 		"react": "^16.2.0",
 		"react-dom": "^16.2.0",
 		"reason-react": "0.7.1",
-		"ts-loader": "^5.3.3"
+		"ts-loader": "^8.0.3"
 	},
 	"devDependencies": {
 		"bs-platform": "^4.0.14",
-		"html-webpack-plugin": "^3.2.0",
+		"html-webpack-plugin": "^4.4.1",
 		"meshok-e2e": "2.3.1",
 		"typescript": "^4.0.2",
 		"webpack": "^4.0.1",
