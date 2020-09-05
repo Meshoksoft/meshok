@@ -7,7 +7,6 @@ export async function getAppHtml(page: puppeteer.Page): Promise<string> {
 export async function index(page: puppeteer.Page) {
 	const appHtml = await getAppHtml(page);
 	expect(appHtml).toMatchInlineSnapshot(`
-
 <ul>
   <li>
     <label>
@@ -34,6 +33,5 @@ export async function index(page: puppeteer.Page) {
     </ul>
   </li>
 </ul>
-
 `);
 }
