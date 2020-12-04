@@ -14,7 +14,7 @@
 	},
 	"dependencies": {
 		"@types/jest": "^26.0.13",
-		"@types/puppeteer": "^3.0.1",
+		"@types/puppeteer": "^5.4.1",
 		"jest": "^26.4.2",
 		"jest-serializer-html": "^7.0.0",
 		"meshok-common": "0.1.1",
