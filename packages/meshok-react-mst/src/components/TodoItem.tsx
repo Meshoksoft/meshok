@@ -1,33 +1,50 @@
 import React from "react";
 import { Instance } from "mobx-state-tree";
-import { observer } from "mobx-react-lite";
+import { Observer } from "mobx-react-lite";
 
 import "./TodoItem.css";
 import { Todo } from "../model/Todo";
 
+export const TodoItem = React.memo(_TodoItem);
+
 function _TodoItem(
-	{
-		itemData: { title, children, showChildren, toggleChildrenVisibility }
-	}: {
-		itemData: Instance<typeof Todo>
-	}
+	{ itemData }: { itemData: Instance<typeof Todo> }
 ): JSX.Element {
 	const isEditing = false;
 
 	return (
-		<>
-			{title
-				? renderTitle(title, isEditing, showChildren, toggleChildrenVisibility)
-				: null}
-			{showChildren
-				? renderChildren(children)
-				: null}
-		</>
+		<Observer>{() => {
+			const {
+				title,
+				children,
+				showChildren,
+				toggleChildrenVisibility
+			} = itemData;
+
+			return (
+				<>
+					{title
+						?	renderTitle(
+								title,
+								isEditing,
+								children,
+								showChildren,
+								toggleChildrenVisibility
+							)
+						:	null}
+
+					{showChildren
+						?	renderChildren(children)
+						:	null}
+				</>
+			);
+		}}</Observer>
 	);
 
 	function renderTitle(
 		title: string | undefined,
 		isEditing: boolean,
+		children: Array<Instance<typeof Todo>>,
 		showChildren: boolean,
 		toggleChildrenVisibility: () => void
 	): JSX.Element {
@@ -35,8 +52,11 @@ function _TodoItem(
 			<>
 				{renderTitleText(title, isEditing)}
 				{children.length > 0
-					? renderTitleButtons(showChildren, toggleChildrenVisibility)
-					: null}
+					?	renderTitleButtons(
+							showChildren,
+							toggleChildrenVisibility
+						)
+					:	null}
 			</>
 		);
 	}
@@ -45,11 +65,13 @@ function _TodoItem(
 		title: string | undefined,
 		isEditing: boolean
 	): JSX.Element {
-		return isEditing
-			?	<label>
-					<input type="text" defaultValue={title} />
-				</label>
-			: <label>{title}</label>;
+		return (
+			<label>
+				{isEditing
+					?	<input type="text" defaultValue={title} />
+					:	title}
+			</label>
+		);
 	}
 
 	function renderTitleButtons(
@@ -64,16 +86,16 @@ function _TodoItem(
 	}
 
 	function renderChildren(
-		children: Instance<typeof Todo>[]
+		children: Array<Instance<typeof Todo>>
 	): JSX.Element | null {
 		return (children.length > 0)
-			?	<ul>{
-					children.map((child, i) =>
-						<li key={i}><TodoItem itemData={child} /></li>
-					)
-				}</ul>
-			: null;
+			?	<ul>
+					{children.map((child, i) =>
+						<li key={i}>
+							<TodoItem itemData={child} />
+						</li>
+					)}
+				</ul>
+			:	null;
 	}
 }
-
-export const TodoItem = observer(_TodoItem);
